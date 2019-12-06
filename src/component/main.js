@@ -147,7 +147,7 @@ class Main extends Component {
       }
       else if(type === 'circle'){
         this.props.DispatchAddCircle(layer)
-        this.GPXimport()
+        //this.GPXimport()
         console.log("_onCreated: circle created", this.props.sfdata);
       }else if(type === 'polyline'){
         this.props.DispatchAddPolyline(layer,bounds)
