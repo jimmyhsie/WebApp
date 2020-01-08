@@ -1,10 +1,13 @@
 import produce from "immer"
 
 const initState = {
+    viewcenter:[],
+    pointerToPopup:{TF:false,po:[0,0],type:"",createPo : [0,0] },
     ulstate : {
         OpenOrClose: [],
     },
     modalstate: false,
+    blogmodalstate: false,
     GoogleSearchMarker:{position:[0,0],status:'',value:{}},
     lat: 25.0782884,
     lng: 121.6067442,
@@ -24,6 +27,7 @@ const initState = {
       coordinate:"",
       photo:"",
       remark:"",
+      blog:"",
 
     },
     mapcursor:'',
@@ -88,13 +92,19 @@ switch (action.type) {
             ...state , fdata: {...state.fdata, remark: action.remark}
         }
     
+    case 'handleBlog':
+    
+            return{
+                ...state , fdata: {...state.fdata, blog: action.blog}
+            }
+    
     case 'handleSubmit':
-        //console.log(action.fdata)
+        //console.log(action)
         //let markers = state.MarkersPosition
         let idd = state.clickFeatureID
         
         //markers[idd] = action.fdata.coordinate
-        const submitState = produce(state,draftState =>{
+        let submitState = produce(state,draftState =>{
             draftState.sfdata[idd].name = action.fdata.name
             draftState.sfdata[idd].address = action.fdata.address
             draftState.sfdata[idd].photo = action.fdata.photo
@@ -103,60 +113,116 @@ switch (action.type) {
 
         })
         return submitState
-    case 'getFeatureID':
-        console.log(state.fdata,state.sfdata)
-        const clearsubmitState = produce(state,draftState =>{
+    
+    case 'bloghandleSubmit':
+            //console.log(action)
+            //let markers = state.MarkersPosition
+            let blogid = state.clickFeatureID
             
-            draftState.fdata.name = ""
-            draftState.fdata.address = state.sfdata[action.id].address
-            draftState.fdata.photo = ""
-            draftState.fdata.remark = ""
+            //markers[idd] = action.fdata.coordinate
+            let blogsubmitState = produce(state,draftState =>{
+                draftState.sfdata[blogid].blog = action.blog
+                
+                
+    
+            })
+            return blogsubmitState    
+    case 'PopupIdAdd':
+        let PopupIdAdd = produce(state,draftState =>{
 
             draftState.clickFeatureID= action.id
         })
+        return PopupIdAdd
+    case 'getFeatureID':
+        //console.log(state.fdata,state.sfdata)
+        let clearsubmitState = produce(state,draftState =>{
+            
+            draftState.fdata.name = state.sfdata[action.id].name
+            draftState.fdata.address = state.sfdata[action.id].address
+            draftState.fdata.photo = state.sfdata[action.id].photo
+            draftState.fdata.remark = state.sfdata[action.id].remark
+            draftState.fdata.blog = state.sfdata[action.id].blog
+            
+            draftState.clickFeatureID= action.id
+        })
         return clearsubmitState
-    case  'ulonclick': 
-        //console.log(id)
-        let deltaA = state.ulstate.OpenOrClose
-        //console.log(deltaA)
-        deltaA[action.id] = !state.ulstate.OpenOrClose[action.id]
-        
-        return{ 
-            ...state,
-            ulstate: {...state.ulstate,OpenOrClose:deltaA},
-                
 
-                
-                
-        }
+    case 'removePopup':
+        console.log(188)
+        let cleanPopstate = produce(state,draftState =>{
+            draftState.pointerToPopup.TF = false
+            draftState.pointerToPopup.po = [0,0]
+            draftState.fdata.name = ""
+            draftState.fdata.address = ""
+            draftState.fdata.photo = ""
+            draftState.fdata.remark = ""
+            draftState.fdata.blog = ""
+            //draftState.lat=action.latlng.lat
+            //draftState.lng=action.latlng.lng
+        }) 
+        
+        return cleanPopstate
+    case 'openPopup':
+            //console.log(1)
+            let openPopstate = produce(state,draftState =>{
+                draftState.pointerToPopup.TF = true
+                //draftState.pointerToPopup.po = [0,0]
+                //draftState.lat=action.latlng.lat
+                //draftState.lng=action.latlng.lng
+            }) 
+            
+            return openPopstate
+    
+    case  'ulonclick': 
+
+        let deltaA = produce(state,draftState =>{
+
+            draftState.sfdata[action.id].OpenOrClose = !state.sfdata[action.id].OpenOrClose
+            draftState.blogmodalstate = true
+            draftState.fdata.blog = draftState.sfdata[action.id].blog
+
+        })
+        
+        
+        return deltaA
     case 'getmoveend':
-        //console.log(action.e.target._lastCenter)
-        //console.log(state.lat)
-        const getmoveend = produce(state, draftState => {
-            if(!!action.e.target._lastCenter){
-            draftState.zoom = action.e.target._animateToZoom
-            draftState.lat = action.e.target._lastCenter.lat
-            draftState.lng = action.e.target._lastCenter.lng
-            }
+        //console.log(action.e.center)
+        //console.log(state.bounds)
+        let getmoveend = produce(state, draftState => {
+            
+            //draftState.viewcenter = action.e.center
+            //draftState.lat = action.e.center[0]
+            //draftState.lng = action.e.center[1]
+            draftState.pointerToPopup.TF = true
+            draftState.pointerToPopup.po = state.pointerToPopup.createPo
+            
         })
         return getmoveend
     case  'pointer': 
+        //console.log(action.data.zoom)
         //console.log(action.data.bounds)
-        const TypeOfPoint = produce(state, draftState => {
+        let TypeOfPoint = produce(state, draftState => {
 
+            draftState.fdata.name = action.data.name
+            draftState.fdata.address = action.data.address
+            draftState.fdata.photo = action.data.photo
+            draftState.fdata.remark = action.data.remark
+            draftState.fdata.blog = action.data.blog
             draftState.lat = action.data.coordinate[0]
             draftState.lng = action.data.coordinate[1]
-            if(action.data.layertype === "marker"){
-                draftState.zoom = action.data.zoom
-            }else if(action.data.layertype === "circle"){
-                draftState.zoom = action.data.zoom
-            }else if(action.data.layertype === "polygon"){
-                draftState.bounds = action.data.bounds
-            }else if(action.data.layertype === "polyline"){
-                draftState.bounds = action.data.bounds
-            }else if(action.data.layertype === "rectangle"){
-                draftState.bounds = action.data.bounds
+            if(draftState.pointerToPopup.po[0] == 0 && draftState.pointerToPopup.po[0] !== action.data.coordinate[0]){
+                draftState.pointerToPopup.TF = !draftState.pointerToPopup.TF
+                draftState.pointerToPopup.po = [action.data.coordinate[0],action.data.coordinate[1]]
+                //console.log(1)
+            }else if(draftState.pointerToPopup.po[0] !== 0 && draftState.pointerToPopup.po[0] !== action.data.coordinate[0]){
+                draftState.pointerToPopup.po = [action.data.coordinate[0],action.data.coordinate[1]]
+                //console.log(2)    
+            }else if(draftState.pointerToPopup.po[0] !== 0 && draftState.pointerToPopup.po[0] == action.data.coordinate[0]){
+                draftState.pointerToPopup.TF = true
+                //console.log(3)
             }
+            
+            
             
         })
     
@@ -190,6 +256,21 @@ switch (action.type) {
             ...state,
             toolsta: !action.toolstate,
         }    
+    case 'PopupOpenWhenCreatedAction':
+        //console.log(action.layer)
+        let PopupOpen = produce(state, draftState => {
+            draftState.pointerToPopup.TF = true
+            draftState.pointerToPopup.po = [action.layer._latlng.lat,action.layer._latlng.lng]
+            //draftState.pointerToPopup.type = "circle"
+        })
+        return PopupOpen
+    case 'PopupOpenWhenCreatedActionForRectangle':
+            console.log(action.center)
+            let PopupOpenRec = produce(state, draftState => {
+                draftState.pointerToPopup.TF = true
+                draftState.pointerToPopup.po = action.center
+            })
+            return PopupOpenRec
 // 加入圖層
     case 'DispatchAddMarker':
         
@@ -205,15 +286,18 @@ switch (action.type) {
             remark:"",
             coordinate: [action.layer._latlng.lat,action.layer._latlng.lng],
             id:action.layer._leaflet_id,
-            zoom: 16,
+            //zoom: 16,
+            OpenOrClose: false,
+
         }
         //console.log(MarkernewLayer)   
                     
         return {
             ...state, 
-            lat: action.layer._latlng.lat,
-            lng: action.layer._latlng.lng,
-            zoom: 16,
+            //lat: action.layer._latlng.lat,
+            //lng: action.layer._latlng.lng,
+            zoom: action.zoom,
+            //bounds: "",
             sfdata: {...state.sfdata, ...MarkernewLayer},
               
         }
@@ -236,6 +320,8 @@ switch (action.type) {
             coordinate: [xposition,yposition],
             id:action.layer._leaflet_id,
             bounds: rectanglebounds,
+            //zoom: action.zoom,
+            OpenOrClose: false,
         }
                        
         return {
@@ -243,11 +329,12 @@ switch (action.type) {
             lat: xposition,
             lng: yposition,
             sfdata: {...state.sfdata, ...rectanglenewLayer},
-            bounds: rectanglebounds,
+            zoom: action.zoom,
+            //bounds: rectanglebounds,
               
         }
     case 'DispatchAddPolygon':
-        console.log(action.layer)
+        //console.log(action.layer)
         let Polygonid = action.layer._leaflet_id;
         let PolygonnewLayer={}
         let polygonbounds = action.layer._bounds
@@ -262,14 +349,17 @@ switch (action.type) {
             remark:"",
             coordinate: [xxposition,yyposition],
             id:action.layer._leaflet_id,
-            bounds: polygonbounds,
+            //bounds: polygonbounds,
+            OpenOrClose: false,
+            
         }
                        
         return {
             ...state, 
             lat: xxposition,
             lng: yyposition,
-            bounds: polygonbounds,
+            zoom: action.zoom,
+            //bounds: polygonbounds,
             sfdata: {...state.sfdata, ...PolygonnewLayer},
               
         }
@@ -289,14 +379,16 @@ switch (action.type) {
             remark:"",
             coordinate: [linex,liney],
             id:action.layer._leaflet_id,
-            bounds: LineBounds,
+            //bounds: LineBounds,
+            OpenOrClose: false,
         }
                        
         return {
             ...state, 
             lat: linex,
             lng: liney,
-            bounds: LineBounds,
+            zoom: action.zoom,
+            //bounds: LineBounds,
             sfdata: {...state.sfdata, ...PolylinenewLayer},
               
         }
@@ -315,6 +407,8 @@ switch (action.type) {
                 coordinate: [action.layer._latlng.lat,action.layer._latlng.lng],
                 id:action.layer._leaflet_id,
                 zoom: action.zoom,
+                //bounds: action.zoom,
+                OpenOrClose: false,
             }
                            
             return {
@@ -322,6 +416,7 @@ switch (action.type) {
                 lat: action.layer._latlng.lat,
                 lng: action.layer._latlng.lng,
                 zoom: action.zoom,
+                //bounds: action.zoom,
                 sfdata: {...state.sfdata, ...CirclenewLayer},
                   
             }
@@ -334,7 +429,7 @@ switch (action.type) {
             
             
 
-            const EditState = produce(state, draftState => {
+            let EditState = produce(state, draftState => {
                 Feature.map((id,idx) =>{
                     //console.log(action.layer._layers[id])
                     //console.log(draftState.sfdata)
@@ -373,8 +468,8 @@ switch (action.type) {
 // 刪除圖層 
     case 'DeleteFeature':   
         let DFeature = Object.keys(action.layer._layers)   
-        const DeleteState = produce(state, draftState => {
-
+        let DeleteState = produce(state, draftState => {
+            draftState.pointerToPopup.TF = false
             for(let i = 0; i< DFeature.length ;i++){
                 delete draftState.sfdata[DFeature[i]]
             }

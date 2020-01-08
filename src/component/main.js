@@ -1,17 +1,36 @@
-import React, { Component } from 'react';
+import React, { Component,useEffect  } from 'react';
 import {GoogleLayer} from 'react-leaflet-google';
 import { Map, TileLayer, Marker,FeatureGroup, Popup} from 'react-leaflet';
 import WMTSTileLayer from 'react-leaflet-wmts';
-import {getmoveend, DispatchAddMarker, DispatchAddCircle, DispatchAddPolyline, DispatchAddPolygon, DispatchAddRectangle, EditFeature, removeLi, DeleteFeature, getFeatureID} from '../actions/index';
-import { connect } from "react-redux";
+import {PopupIdAdd, PopupOpenWhenCreatedActionForRectangle, PopupOpenWhenCreatedAction, removePopup, getmoveend, DispatchAddMarker, DispatchAddCircle, DispatchAddPolyline, DispatchAddPolygon, DispatchAddRectangle, EditFeature, removeLi, DeleteFeature, getFeatureID,} from '../actions/index';
+import { connect  } from "react-redux";
 import  PopupForm  from './popupform';
 import GooglePopupForm from './GoogleSearchPopup';
 import { EditControl } from "react-leaflet-draw";
 import * as filelayer from 'leaflet-filelayer'
 import L from 'leaflet'
 import { exportDefaultSpecifier } from '@babel/types';
+import styled from 'styled-components'
 
 
+
+const photostyle = {
+  display: 'inline-block',
+  width: '20px',
+  height: '20px',
+  backgroundColor: '#EEAA11',
+}
+const Button = styled.input`
+background: #666666;
+float: right;
+`
+const PFrame = styled.div`
+
+  
+  background: #FFFFFF;
+  
+
+`
 
 
 const key = 'AIzaSyB-DzlaXFMDeKrnNKs_EzP27BTnqZ5BfiE'
@@ -27,41 +46,35 @@ class Main extends Component {
         
       }
     }
-
-
+    componentDidUpdate(prevProps) {
+      // Typical usage (don't forget to compare props):
+      /*console.log(prevProps.pointerToPopup.TF,this.props.pointerToPopup.TF)
+      console.log(prevProps.pointerToPopup.po,this.props.pointerToPopup.po)
+      console.log(prevProps.pointerToPopup.type,this.props.pointerToPopup.type)
+      if(this.props.pointerToPopup.type === "circle" && prevProps.pointerToPopup.type === "circle") {
+        console.log(1)
+        this.props.getmoveend(12)
+      }*/
+    }
+    
+    
     layeradd (e) {
-      
+      console.log(e.layer)
+      let bounds = e.target.getBounds()
       let zoom = this.getMapZoom()
+      this.props.PopupIdAdd(e.layer._leaflet_id)
       if(e.layer.dragging){
         //console.log('true')
+        this.PopupOpenWhenCreated(e.layer)
         this.props.DispatchAddMarker(e.layer,zoom)
       }
       
 
     }
-    GPXimport () {
-        L.Control.fileLayerLoad({
-          // Allows you to use a customized version of L.geoJson.
-          // For example if you are using the Proj4Leaflet leaflet plugin,
-          // you can pass L.Proj.geoJson and load the files into the
-          // L.Proj.GeoJson instead of the L.geoJson.
-          layer: L.geoJson,
-          // See http://leafletjs.com/reference.html#geojson-options
-          layerOptions: {style: {color:'red'}},
-          // Add to map after loading (default: true) ?
-          addToMap: true,
-          // File size limit in kb (default: 1024) ?
-          fileSizeLimit: 1024,
-          // Restrict accepted file formats (default: .geojson, .json, .kml, and .gpx) ?
-          formats: [
-              '.geojson',
-              '.kml',
-              '.gpx'
-          ]
-      }).addTo(this.map)
+    
       
       
-    }
+    
     getMapZoom() {
       return this.map && this.map.leafletElement.getZoom();
    }
@@ -69,8 +82,6 @@ class Main extends Component {
     getBounds() {
       if(typeof(this.props.bounds) === "object"){
         return this.props.bounds
-      }else{
-      return this.map && this.map.leafletElement.getBounds();
       }
     }
 
@@ -78,7 +89,7 @@ class Main extends Component {
       //console.log(this.props.GoogleSearchStatus,status)
       if(status == 'OK'){
         return(
-          <Marker position={this.props.GoogleSearchPosition} opacity = {1}>
+          <Marker position={this.props.GoogleSearchPosition} opacity = {1} ref ={ref=>{if(ref){ref.leafletElement.openPopup();} }}>
             <GooglePopupForm/>
           </Marker>
         )
@@ -135,28 +146,59 @@ class Main extends Component {
         )
       }
     }
+    CaculateBoundsToCenter= (layer) => {
+      //console.log(center)
+      let bounds = layer._latlngs[0]
+      let center = [(bounds[0].lat + bounds[1].lat + bounds[2].lat + bounds[3].lat)/4,(bounds[0].lng + bounds[1].lng + bounds[2].lng + bounds[3].lng)/4]
+      
+      return center
+    }
+    PopupOpenWhenCreated = (layer) => {
+      this.props.PopupOpenWhenCreatedAction(layer)
+      
+    }
+
     _onCreated = (e) => {
       let type = e.layerType;
       let layer = e.layer;
-      let bounds = this.getBounds()
-      console.log(e.layer);
+      let bounds = e.target.getBounds()
+      let zoom = this.getMapZoom()
+      //console.log(layer);
+      
       if (type === 'marker') {
         // Do marker specific actions
-        this.props.DispatchAddMarker(layer)
+        //this.props.DispatchAddMarker(layer,zoom)
+        //this.PopupOpenWhenCreated(layer)
         console.log("_onCreated: marker created", this.props.sfdata);
       }
       else if(type === 'circle'){
-        this.props.DispatchAddCircle(layer)
+        
+        this.props.DispatchAddCircle(layer,zoom)
+        setTimeout(() => { 
+          this.PopupOpenWhenCreated(layer)
+        }, 100);
         //this.GPXimport()
         console.log("_onCreated: circle created", this.props.sfdata);
       }else if(type === 'polyline'){
-        this.props.DispatchAddPolyline(layer,bounds)
+        let center = layer._latlngs[0]
+        this.props.PopupOpenWhenCreatedActionForRectangle(center)
+        this.props.DispatchAddPolyline(layer,zoom)
         console.log("_onCreated: polyline created", this.props.sfdata);
       }else if(type === 'polygon'){
-        this.props.DispatchAddPolygon(layer,bounds)
+        let center = this.CaculateBoundsToCenter(layer)
+        setTimeout(() => { 
+          this.props.PopupOpenWhenCreatedActionForRectangle(center)
+        }, 100);
+        this.props.DispatchAddPolygon(layer,zoom)
         console.log("_onCreated: polygon created", this.props.sfdata);
       }else if(type === 'rectangle'){
-        this.props.DispatchAddRectangle(layer,bounds)
+        let center = this.CaculateBoundsToCenter(layer)
+        setTimeout(() => {
+          
+          this.props.PopupOpenWhenCreatedActionForRectangle(center)
+        }, 100);
+        
+        this.props.DispatchAddRectangle(layer,zoom)
         console.log("_onCreated: rectangle created", this.props.sfdata);
       }
       
@@ -164,49 +206,66 @@ class Main extends Component {
       //console.log(e.layer._leaflet_id);
     }
     _onEditPath =(e) => {
-      console.log(e)
+      //console.log(e)
       let zoom = this.getMapZoom()
       this.props.EditFeature(e.layers,zoom)
 
-      console.log(this.props.sfdata)
+      //console.log(this.props.sfdata)
     }
     _onDeleted =(e) => {
       console.log(e)
       
       this.props.DeleteFeature(e.layers)
-      console.log(this.props.sfdata)
+      //console.log(this.props.sfdata)
     }
+
+    showthepopup (ref) {
+      console.log(this.props.pointerToPopup.TF )
+      if(ref && this.props.pointerToPopup.TF) {
+        ref.leafletElement.openPopup(this.props.pointerToPopup.po)    
+      }
+  
+    }
+
     render() {
-      let centerposition = [this.props.lat, this.props.lng]
       
-      //console.log(centerposition,[this.props.lat, this.props.lng])
+      
+      //console.log([this.props.lat, this.props.lng])
       return (
         
-        <Map center={centerposition} 
+        <Map center={[this.props.lat, this.props.lng]} 
              zoom={this.props.zoom}  
              zoomControl = {false} 
              style={{zIndex:1,cursor: this.props.mapcursor}} 
-             ref={(ref) => { this.map = ref; }} 
+             ref={(reff) => { this.map = reff; }} 
              //useFlyTo = {true}
-             bounds ={this.getBounds()}
-             onmoveend={e=>this.props.getmoveend(e)}
-             
+             //bounds ={this.getBounds()}
+             //onmoveend={e=>this.props.getmoveend(e)}
+             //onViewportChanged = {e=>this.props.getmoveend(e)}
+             //onClick = {(e) => {this.props.removePopup(e);}}
+             //onPreclick = {(e) => {this.props.removePopup(this.map.leafletElement.getCenter());}}
              >
           
           {this.LayerSwitch(this.props.LayerId)}
-          <FeatureGroup  onClick ={(e)=>this.props.getFeatureID(e.layer._leaflet_id)} onlayeradd ={(e)=>this.layeradd(e)} >
-            <PopupForm />
+          <FeatureGroup  onClick ={(e)=>this.props.getFeatureID(e.layer._leaflet_id)} 
+                         onlayeradd ={(e)=>this.layeradd(e)} 
+                         ref={ref=>{if(ref&& this.props.pointerToPopup.TF){console.log(55688);ref.leafletElement.openPopup(this.props.pointerToPopup.po);}}} 
+                         onPopupClose = {e => {console.log(123);this.props.removePopup(e)}}
+                         >
             {this.ToolStateSwitch(this.props.toolsta)}
+            
+            
             {Object.keys(this.props.MarkersPosition).map((id,idx) =>{
               //console.log(this.props.MarkersPosition,id);
               
               return ( 
-              <Marker key ={id} position={this.props.MarkersPosition[id]} opacity = {0.9} onClick={(e)=>console.log(e)}>
-                <PopupForm />
+              <Marker key ={id} position={this.props.MarkersPosition[id]} opacity = {0.9} >
+                
               </Marker>
               )
             
             })}
+            <PopupForm/>
           </FeatureGroup>
           {this.GoogleSearchMarker(this.props.GoogleSearchStatus)}
           
@@ -231,6 +290,10 @@ const mapStateToProps = state => {
           GoogleSearchStatus: state.GoogleSearchMarker.status,
           GoogleSearchPosition: state.GoogleSearchMarker.position,
           sfdata: state.sfdata,
+          pointerToPopup: state.pointerToPopup,
+          //position:[Math.round(state.lat*10000)/10000,Math.round(state.lng*10000)/10000],
+          
+          
 
     
       }
@@ -238,20 +301,20 @@ const mapStateToProps = state => {
   
 const mapDispatchToProps = dispatch => {
   return {
-    DispatchAddMarker: (layer) =>{
-      dispatch(DispatchAddMarker(layer))
+    DispatchAddMarker: (layer,bounds) =>{
+      dispatch(DispatchAddMarker(layer,bounds))
     },
-    DispatchAddCircle: (layer) =>{
-      dispatch(DispatchAddCircle(layer))
+    DispatchAddCircle: (layer,bounds) =>{
+      dispatch(DispatchAddCircle(layer,bounds))
     },
-    DispatchAddRectangle: (layer,zoom) =>{
-      dispatch(DispatchAddRectangle(layer,zoom))
+    DispatchAddRectangle: (layer,bounds) =>{
+      dispatch(DispatchAddRectangle(layer,bounds))
     },
-    DispatchAddPolygon: (layer,zoom) =>{
-      dispatch(DispatchAddPolygon(layer,zoom))
+    DispatchAddPolygon: (layer,bounds) =>{
+      dispatch(DispatchAddPolygon(layer,bounds))
     },
-    DispatchAddPolyline: (layer,zoom) =>{
-      dispatch(DispatchAddPolyline(layer,zoom))
+    DispatchAddPolyline: (layer,bounds) =>{
+      dispatch(DispatchAddPolyline(layer,bounds))
     },
     removeLi: layer => {
       dispatch(removeLi(layer))
@@ -267,7 +330,19 @@ const mapDispatchToProps = dispatch => {
     },
     getmoveend:(e) => {
       dispatch(getmoveend(e))
+    },
+    removePopup:(latlng) => {
+      dispatch(removePopup(latlng))
+    },
+    PopupOpenWhenCreatedAction:(layer) => {
+      dispatch(PopupOpenWhenCreatedAction(layer))
+    },
+    PopupOpenWhenCreatedActionForRectangle:(center) => {
+      dispatch(PopupOpenWhenCreatedActionForRectangle(center))
+    },PopupIdAdd:(id) =>{
+      dispatch(PopupIdAdd(id))
     }
+    
 
     
     

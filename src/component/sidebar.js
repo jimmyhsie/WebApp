@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import styled, {keyframes }from 'styled-components'
 import {ulonclick, pointer} from '../actions/index'
 import { connect } from "react-redux";
+import { ReactComponent as Minus } from '../icon/arrowLeft.svg'
+import { ReactComponent as Plus } from '../icon/arrowRight.svg'
+import { ReactComponent as Blog } from '../icon/blog.svg'
+
 
 const Button = styled.button`
 
@@ -9,7 +13,13 @@ float: right;
 z-index: 3;
 
 `
+const SideDiv = styled.div`
+background: black;
+margin:0 0 0 0;
 
+z-index:3;
+
+`
 
 const Ful = styled.ul`
 
@@ -41,42 +51,94 @@ button.RemoveButton:hover{
     float: right;
     opacity: 1;
 }
-button.OpenButton{
+.OpenButton{
     float: right;
     opacity: 0.2;
     transition: opacity .35s ease;
+    display: inline;
+    g {
+    
+        fill: #DB7290;;
+    }
+    g path {
+        
+        stroke: #DB7290;;
+        fill: #FFD0DD;
+        
+    }
+    
+    max-width: 30px; 
+    max-height: 30px;
+    text-align: right;
 }
-button.OpenButton:hover{
+.OpenButton:hover{
     float: right;
     opacity: 1;
 }
 `
+const iconrotate = keyframes`
 
+
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(45deg);
+    }
+
+`
 
 const SlideFromLtoR = keyframes`
 
-from{
-    width: 1%
-}
-to{
-    width: 15%
-}
+    from{
+        width: 0%
+    }
+    to{
+        width: 15%
+    }
 `
 const SlideFromRtoL = keyframes`
 
-from{
-    width: 15%
-}
-to{
-    width: 1%
-}
+    from{
+        width: 15%
+    }
+    to{
+        width: 0%
+    }
 `
-
+const Icondiv = styled.div`
+    
+    background:${props=> (props.clickstate ? 'rgba(0,0,0,.075)' : 'rgba(0,123,255,.25)')};
+    float: left;
+    display: inline;
+    position: absolute;
+    .App-minus g {
+    
+        fill: #DB7290;;
+    }
+    .App-minus g path {
+        
+        stroke: #DB7290;;
+        fill: #FFD0DD;
+        
+    }
+    .App-minus {
+        max-width: 30px; 
+        max-height: 30px;
+        text-align: right;
+        
+        
+    }
+    width: 30px;
+    
+    z-index: 4;
+    
+    `
 const Sbar = styled.div`
     
     
     float: left;
-    display: block ;
+    display: inline;
     margin-left: auto;
     background: black;
     color: white;
@@ -115,37 +177,37 @@ class SideBar extends Component {
     render() {
         //console.log(this.props.record)
         return (
-            
-            //console.log(this.state.clickstate),
-            <Sbar style= { {height: 'calc(100% - 34px)', opacity: 0.5 ,}} clickstate = {this.state.clickstate}>
-                <Button onClick = {this.onclick}>click</Button>
-                { !this.state.clickstate ? '' :<Ful>
-                    {    //console.log(this.props.record),
-                        !this.props.record?"this.props.record.map":Object.keys(this.props.record).map((todo, index)=>{
-                            return(
+            <SideDiv className="SideDiv">
+                
+                <Sbar style= { {height: 'calc(100% - 34px)', opacity: 0.5 }} clickstate = {this.state.clickstate}>
+                    
+                    { !this.state.clickstate ? '' :<Ful>
+                        {    //console.log(this.props.record),
+                            !this.props.record?"this.props.record.map":Object.keys(this.props.record).map((todo, index)=>{
+                                return(
 
-                                //console.log(this.props.record[todo].id),
-                                //console.log(index),
-                                <li className="subli" key={this.props.record[todo].id}>
-                                    <span className="subtitle" style= {{cursor:'pointer',}} id={this.props.record[todo].id} onClick ={e => this.props.pointer(this.props.record[todo])}>{this.props.record[todo].name}</span>
-                                    
-                                    <button className="OpenButton" onClick={e => this.props.ulonclick(index)}>O</button>
-                                    
-                                    <ul className="submenu" style={{display: this.props.ulstate.OpenOrClose[index] ? 'block' : 'none' }}>
+                                    //console.log(this.props.record[todo].id),
+                                    //console.log(index),
+                                    <li className="subli" key={this.props.record[todo].id}>
+                                        <span className="subtitle" style= {{cursor:'pointer',}} id={this.props.record[todo].id} onClick ={e => this.props.pointer(this.props.record[todo])}>{this.props.record[todo].name}</span>
+                                        <div style={{width:'25px', display: 'inline-block' , float: 'right'}}>
+                                        <Blog className="OpenButton" onClick={e => this.props.ulonclick(todo) } >O</Blog>
+                                        </div>
+                                    </li>    
 
-                                            <li>{this.props.record[todo].address}</li>
-                                            <li>{this.props.record[todo].coordinate}</li>
-                                            <li>{this.props.record[todo].photo}</li>
-                                            <li>{this.props.record[todo].remark}</li>
-
-                                    </ul>
-                                </li>    
-
-                            )
-                        })                      
-                    }</Ful>
-                }
-            </Sbar>
+                                )
+                            })                      
+                        }</Ful>
+                    }
+                </Sbar>
+                <Icondiv clickstate = {this.state.clickstate}>
+                    { !this.state.clickstate ? 
+                    
+                        <Plus onClick = {this.onclick} className="App-minus"/>
+                    
+                        :<Minus onClick = {this.onclick} className="App-minus" />}
+                </Icondiv>
+            </SideDiv>
         )
     }
 }

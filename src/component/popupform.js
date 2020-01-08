@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import {Popup } from "react-leaflet";
-import styled, {keyframes }from 'styled-components'
-import {handleName,handleAddress,handleCoordinate,handlePhoto,handleRemark,handleSubmit} from '../actions/index'
+import styled from 'styled-components'
+import { blogmodalstate, handleName, handleAddress, handleCoordinate, handlePhoto, handleRemark, handleSubmit} from '../actions/index'
 import { connect } from "react-redux";
+import { ReactComponent as Photo } from '../icon/photo.svg'
+import { ReactComponent as Markericon } from '../icon/marker.svg'
+import { ReactComponent as Upload } from '../icon/upload.svg'
+import { ReactComponent as Blog } from '../icon/blog.svg'
+
 const photostyle = {
     display: 'inline-block',
     width: '20px',
@@ -10,35 +15,50 @@ const photostyle = {
     backgroundColor: '#EEAA11',
   }
 const Button = styled.input`
-background: #666666;
-float: right;
+    background: #666666;
+    float: right;
 `
-const PFrame = styled.div`
-
-    
+const PFrame = styled.div`    
     background: #FFFFFF;
+    width: 300px;
     
 
 `
 
 class PopupForm extends Component {
 
+    state = {
+        imagePreviewUrl:"",
+    }
 hhandleSubmit (e) {
-    
+    e.preventDefault();
     //console.log(typeof(this.props.fdata.id))
     this.props.handleSubmit(this.props.fdata)
-    e.preventDefault();
+    
     //console.log(this.props.fdata,this.props.sfdata)
     
 }   
+    
+photoUpload = e =>{
+    e.preventDefault();
+    const reader = new FileReader();
+    const file = e.target.files[0];
+    if(file){
+        reader.onloadend = () => {
+            this.props.handlePhoto(file)
+          this.setState({
 
-    
-    
+            imagePreviewUrl: reader.result
+          });
+        }
+        reader.readAsDataURL(file);
+    }
+}    
 
     render() {
-        
+        //console.log(this.props.position)
         return(
-            <Popup >
+            <Popup autoPan ={false}>
                 
                 <PFrame> 
                 <form onSubmit={e=>this.hhandleSubmit(e)}>    
@@ -48,8 +68,9 @@ hhandleSubmit (e) {
                         name="name"
                         type="text"
                         placeholder="請輸入地點名稱"
-                        value={this.props.fdata.name}
+                        value={this.props.fdata.name||""}
                         onChange={this.props.handleName} 
+                        style ={{ width:'280px', padding:'0'}}
                         />
                     </label>
                     <br/>
@@ -61,36 +82,45 @@ hhandleSubmit (e) {
                         placeholder="請輸入地址"
                         value={this.props.fdata.address||""}
                         onChange={this.props.handleAddress} 
+                        style ={{ width:'280px', padding:'0'}}
                         />
                     </label>
                     <br />
                     
-                    <label htmlFor="file"><span className='fa fa-edit edit-icon' style = {photostyle}> </span></label>
-
-                    
-                      <input
-                        className ="edit-icon"
-                        name="photo"
-                        type="file"
-                        ref={input => {
-                          this.fileInput = input;
-                        }} 
-                        onChange={this.props.handlePhoto} 
-                        id="file"
-                        style={{display: 'none'}}
-                        />
-                    
-                    <br />
                     <label>
-                        備註:
+                        
                         <input 
                             name="remark"
                             type="text"
                             value={this.props.fdata.remark}
                             onChange={this.props.handleRemark}
+                            placeholder="備註"
+                            style ={{height:'30px', width:'280px', padding:'0'}}
                             />
                     </label>
-                    <Button type="submit" value="Submit" onClick= {e=>this.hhandleSubmit(e)}></Button>
+                    <br />
+                    <label htmlFor="photo-upload" style={{ width:'50%',marginLeft: 'auto', marginRight: 'auto', display:'block'}} >
+                        <div className="img-wrap img-upload"  >
+                            
+                          <img  src={this.state.imagePreviewUrl} style={{ width:'50%',marginLeft: 'auto', marginRight: 'auto', display:'block'}}/>
+                        </div>
+                        <input id="photo-upload" type="file" onChange={this.photoUpload} style ={{display:'none'}}/> 
+                    </label>
+                    <br />
+                    <ul style={{padding :'0' , float:'right'}}>
+                        <label htmlFor="photo-upload" style={{cursor:'pointer',}} >
+                            <Photo  width={25} ></Photo>
+                        </label>
+                        <label style={{cursor:'pointer',}}>
+                            <Blog width={25} onClick ={this.props.blogmodalstate}></Blog>
+                        </label>
+                        <Upload width={25} style={{cursor:'pointer', float:'right'}}  onClick={e=>this.hhandleSubmit(e)} />
+                    </ul>    
+                    
+                    <ul style={{padding :'0'}}>
+                        <Markericon style={{float:'left'}} width={25} htmlFor ="" /> 
+                        <span >{this.props.position[0]},{this.props.position[1]}</span>
+                    </ul>
                 </form>
                 </PFrame>
             
@@ -106,6 +136,8 @@ const mapStateToProps = state => {
         ulstate: state.ulstate,
         position:[Math.round(state.lat*10000)/10000,Math.round(state.lng*10000)/10000],
         sfdata: state.sfdata,
+        
+        pointerToPopup: state.pointerToPopup,
     }
 }
 
@@ -120,8 +152,8 @@ const mapDispatchToProps = dispatch => {
         handleCoordinate: e => {
             dispatch(handleCoordinate(e.target.value))
         },
-        handlePhoto: e => {
-            dispatch(handlePhoto(e.target.value))
+        handlePhoto: file => {
+            dispatch(handlePhoto(file))
         },
         handleRemark: e => {
             dispatch(handleRemark(e.target.value))
@@ -129,6 +161,11 @@ const mapDispatchToProps = dispatch => {
         handleSubmit: data =>{
             dispatch(handleSubmit(data))
         },
+        blogmodalstate:mboolean =>{
+            dispatch(blogmodalstate(mboolean))
+        },
+        
+        
         
     }
 }

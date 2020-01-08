@@ -1,5 +1,5 @@
-import {pointsRef, docRef, firestore} from '../config/config'
-import { thisExpression } from '@babel/types'
+import {pointsRef, firestore} from '../config/config'
+
 
 export const Geo = (inputText) =>{
     return{
@@ -111,27 +111,63 @@ export const toolstate = (toolstate) => {
         toolstate
     }
 }
-//加入圖層
-export const DispatchAddMarker = (layer) => {
-    console.log(layer)
+export const removePopup = (latlng) => {
+    return{
+        type: 'removePopup',
+        latlng,
+        
+    }
+}
+
+export const openPopup = (latlng) => {
+    return{
+        type: 'openPopup',
+        latlng,
+        
+    }
+}
+export const PopupIdAdd = (id) => {
+    return {
+        type: 'PopupIdAdd',
+        id,
+    }
+}
+
+export const PopupOpenWhenCreatedAction = (layer) => {
+    return {
+        type: 'PopupOpenWhenCreatedAction',
+        layer,
+    }
+}
+export const PopupOpenWhenCreatedActionForRectangle = (center) => {
+    return {
+        type: 'PopupOpenWhenCreatedActionForRectangle',
+        center,
+    }
+}
+//加入圖層 
+export const DispatchAddMarker = (layer,bounds) => {
+    //console.log(layer)
     //path.join(path_a, path_b)
-    let path = "points/"+layer._leaflet_id
+    /*let path = "points/"+layer._leaflet_id
     
     firestore.doc(path).set({coordinate:[layer._latlng.lng,layer._latlng.lat],type:"marker"}).then(()=>{
         console.log('save')
     }).catch(error=>{
         console.log(error)
-    })
+    })*/
     return{
         type: 'DispatchAddMarker',
         layer,
+        bounds,
         
     }
 }
-export const DispatchAddCircle = (layer) => {
+export const DispatchAddCircle = (layer,zoom) => {
     return{
         type: 'DispatchAddCircle',
         layer,
+        zoom,
         
     }
 }
@@ -209,7 +245,7 @@ export const fetchToDos = () => async dispatch => {
   });
 };
 
-//madalactions
+//madalactions 
 
 export const modalstate = mstate => {
     return{
@@ -217,6 +253,28 @@ export const modalstate = mstate => {
         mstate
     }
 }
+
+export const blogmodalstate = mstate => {
+    return{
+        type: "blogmodalstate",
+        mstate
+    }
+}
+
+export const handleBlog = blog =>{
+    return{
+        type: "handleBlog",
+        blog,
+    }
+}
+
+export const bloghandleSubmit = blog =>{
+    return{
+        type: "bloghandleSubmit",
+        blog,
+    }
+}
+
 
 
 

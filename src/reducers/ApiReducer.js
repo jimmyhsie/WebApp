@@ -2,7 +2,7 @@
 const apiR = (state , action) => {
     
   if (action.type === "modalstate"){
-    console.log(state.modalstate)
+    //console.log(state.modalstate)
     if(state.modalstate === false){
       return{
         ...state,
@@ -12,6 +12,19 @@ const apiR = (state , action) => {
       return{
         ...state,
         modalstate: false
+      }
+    }
+  }else if (action.type === "blogmodalstate"){
+    console.log(state.blogmodalstate)
+    if(state.blogmodalstate === false){
+      return{
+        ...state,
+        blogmodalstate: true
+      }
+    }else{
+      return{
+        ...state,
+        blogmodalstate: false
       }
     }
   }

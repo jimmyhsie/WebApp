@@ -78,6 +78,7 @@ class ToolBar extends Component {
         },
         error => {
           console.error(error);
+          alert("查不到該點位")
         }
     )
     }
