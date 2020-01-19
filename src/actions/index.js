@@ -1,4 +1,4 @@
-import {pointsRef, firestore} from '../config/config'
+
 
 
 export const Geo = (inputText) =>{
@@ -230,12 +230,15 @@ export const getFeatureID = (id) => {
 
 //API Async
 
-export const addToDo = newToDo => async dispatch => {
-   pointsRef.push().set(newToDo);
+
+export const test = testi =>  {
+    
+   return {
+       type:'test',
+       testi
+   }
 };
-export const completeToDo = completeToDo => async dispatch => {
-   pointsRef.child(completeToDo).remove();
-};
+/*
 export const fetchToDos = () => async dispatch => {
    pointsRef.on("value", snapshot => {
     dispatch({
@@ -244,7 +247,7 @@ export const fetchToDos = () => async dispatch => {
     });
   });
 };
-
+*/
 //madalactions 
 
 export const modalstate = mstate => {

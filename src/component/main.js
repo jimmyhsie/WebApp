@@ -2,7 +2,7 @@ import React, { Component,useEffect  } from 'react';
 import {GoogleLayer} from 'react-leaflet-google';
 import { Map, TileLayer, Marker,FeatureGroup, Popup} from 'react-leaflet';
 import WMTSTileLayer from 'react-leaflet-wmts';
-import {PopupIdAdd, PopupOpenWhenCreatedActionForRectangle, PopupOpenWhenCreatedAction, removePopup, getmoveend, DispatchAddMarker, DispatchAddCircle, DispatchAddPolyline, DispatchAddPolygon, DispatchAddRectangle, EditFeature, removeLi, DeleteFeature, getFeatureID,} from '../actions/index';
+import { PopupIdAdd, PopupOpenWhenCreatedActionForRectangle, PopupOpenWhenCreatedAction, removePopup, getmoveend, DispatchAddMarker, DispatchAddCircle, DispatchAddPolyline, DispatchAddPolygon, DispatchAddRectangle, EditFeature, removeLi, DeleteFeature, getFeatureID,} from '../actions/index';
 import { connect  } from "react-redux";
 import  PopupForm  from './popupform';
 import GooglePopupForm from './GoogleSearchPopup';
@@ -46,20 +46,14 @@ class Main extends Component {
         
       }
     }
-    componentDidUpdate(prevProps) {
-      // Typical usage (don't forget to compare props):
-      /*console.log(prevProps.pointerToPopup.TF,this.props.pointerToPopup.TF)
-      console.log(prevProps.pointerToPopup.po,this.props.pointerToPopup.po)
-      console.log(prevProps.pointerToPopup.type,this.props.pointerToPopup.type)
-      if(this.props.pointerToPopup.type === "circle" && prevProps.pointerToPopup.type === "circle") {
-        console.log(1)
-        this.props.getmoveend(12)
-      }*/
-    }
+    componentDidUpdate() {
+      
+  
+  }
     
     
     layeradd (e) {
-      console.log(e.layer)
+      //console.log(e.layer)
       let bounds = e.target.getBounds()
       let zoom = this.getMapZoom()
       this.props.PopupIdAdd(e.layer._leaflet_id)
@@ -158,7 +152,7 @@ class Main extends Component {
       
     }
 
-    _onCreated = (e) => {
+    _onCreated = async (e) => {
       let type = e.layerType;
       let layer = e.layer;
       let bounds = e.target.getBounds()
@@ -201,6 +195,17 @@ class Main extends Component {
         this.props.DispatchAddRectangle(layer,zoom)
         console.log("_onCreated: rectangle created", this.props.sfdata);
       }
+      
+      
+      
+      //console.log(uplaodLayer.test,this.props.sfdata[layer._leaflet_id].layer)
+      await fetch('/app/insert/layer', {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.props.sfdata[layer._leaflet_id] )
+      });
       
       //console.log(e.layer);
       //console.log(e.layer._leaflet_id);
@@ -249,8 +254,8 @@ class Main extends Component {
           {this.LayerSwitch(this.props.LayerId)}
           <FeatureGroup  onClick ={(e)=>this.props.getFeatureID(e.layer._leaflet_id)} 
                          onlayeradd ={(e)=>this.layeradd(e)} 
-                         ref={ref=>{if(ref&& this.props.pointerToPopup.TF){console.log(55688);ref.leafletElement.openPopup(this.props.pointerToPopup.po);}}} 
-                         onPopupClose = {e => {console.log(123);this.props.removePopup(e)}}
+                         ref={ref=>{if(ref&& this.props.pointerToPopup.TF){ref.leafletElement.openPopup(this.props.pointerToPopup.po);}}} 
+                         onPopupClose = {e => {this.props.removePopup(e)}}
                          >
             {this.ToolStateSwitch(this.props.toolsta)}
             
@@ -291,6 +296,7 @@ const mapStateToProps = state => {
           GoogleSearchPosition: state.GoogleSearchMarker.position,
           sfdata: state.sfdata,
           pointerToPopup: state.pointerToPopup,
+          
           //position:[Math.round(state.lat*10000)/10000,Math.round(state.lng*10000)/10000],
           
           
@@ -339,9 +345,12 @@ const mapDispatchToProps = dispatch => {
     },
     PopupOpenWhenCreatedActionForRectangle:(center) => {
       dispatch(PopupOpenWhenCreatedActionForRectangle(center))
-    },PopupIdAdd:(id) =>{
+    },
+    PopupIdAdd:(id) =>{
       dispatch(PopupIdAdd(id))
-    }
+    },
+    
+    
     
 
     

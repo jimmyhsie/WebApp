@@ -1,6 +1,7 @@
 import produce from "immer"
 
 const initState = {
+    test:"{}",
     viewcenter:[],
     pointerToPopup:{TF:false,po:[0,0],type:"",createPo : [0,0] },
     ulstate : {
@@ -8,6 +9,7 @@ const initState = {
     },
     modalstate: false,
     blogmodalstate: false,
+    
     GoogleSearchMarker:{position:[0,0],status:'',value:{}},
     lat: 25.0782884,
     lng: 121.6067442,
@@ -28,6 +30,7 @@ const initState = {
       photo:"",
       remark:"",
       blog:"",
+      imagePreviewUrl:"",
 
     },
     mapcursor:'',
@@ -38,6 +41,14 @@ const initState = {
 
 const MainR = (state = initState, action) =>{
 switch (action.type) {
+    case 'test':
+        console.log(action.testi)
+        return {
+            ...state, 
+            test: action.testi
+        }
+        
+
     case 'Geo':
         
         return {
@@ -83,7 +94,7 @@ switch (action.type) {
     case 'handlePhoto':
         
         return{
-            ...state , fdata: {...state.fdata, photo: action.photo}
+            ...state , fdata: {...state.fdata, photo: action.photo, imagePreviewUrl: action.photo}
         }
 
     case 'handleRemark':
@@ -99,7 +110,7 @@ switch (action.type) {
             }
     
     case 'handleSubmit':
-        //console.log(action)
+        //console.log(action.fdata.photo)
         //let markers = state.MarkersPosition
         let idd = state.clickFeatureID
         
@@ -108,6 +119,7 @@ switch (action.type) {
             draftState.sfdata[idd].name = action.fdata.name
             draftState.sfdata[idd].address = action.fdata.address
             draftState.sfdata[idd].photo = action.fdata.photo
+            draftState.sfdata[idd].imagePreviewUrl = action.fdata.photo
             draftState.sfdata[idd].remark = action.fdata.remark
             
 
@@ -148,13 +160,14 @@ switch (action.type) {
         return clearsubmitState
 
     case 'removePopup':
-        console.log(188)
+        //console.log(188)
         let cleanPopstate = produce(state,draftState =>{
             draftState.pointerToPopup.TF = false
             draftState.pointerToPopup.po = [0,0]
             draftState.fdata.name = ""
             draftState.fdata.address = ""
             draftState.fdata.photo = ""
+            draftState.fdata.imagePreviewUrl = ""
             draftState.fdata.remark = ""
             draftState.fdata.blog = ""
             //draftState.lat=action.latlng.lat
@@ -265,7 +278,7 @@ switch (action.type) {
         })
         return PopupOpen
     case 'PopupOpenWhenCreatedActionForRectangle':
-            console.log(action.center)
+            //console.log(action.center)
             let PopupOpenRec = produce(state, draftState => {
                 draftState.pointerToPopup.TF = true
                 draftState.pointerToPopup.po = action.center
@@ -276,9 +289,9 @@ switch (action.type) {
         
         let Markerid = action.layer._leaflet_id;
         let MarkernewLayer={}
-        
+        let uniMarkerid = (new Date).getTime()
         MarkernewLayer[Markerid] ={
-            layer:action.layer,
+            layer:{po:[action.layer._latlng.lat,action.layer._latlng.lng]},
             layertype:"marker",
             name:"新增圖層",
             address:"",
@@ -286,6 +299,7 @@ switch (action.type) {
             remark:"",
             coordinate: [action.layer._latlng.lat,action.layer._latlng.lng],
             id:action.layer._leaflet_id,
+            uniID: uniMarkerid,
             //zoom: 16,
             OpenOrClose: false,
 
@@ -304,6 +318,7 @@ switch (action.type) {
     case 'DispatchAddRectangle':
         console.log(action.layer._latlngs[0])
         let rectangleid = action.layer._leaflet_id;
+        let unirectangleid = (new Date).getTime()
         let rectanglenewLayer={}
         let rectanglebounds = action.layer._bounds
         let xposition = (rectanglebounds._northEast.lat+rectanglebounds._southWest.lat)/2
@@ -311,7 +326,10 @@ switch (action.type) {
         //for ( let i = 0; i < action.layer._latlngs[0].length; i++) { xposition += action.layer._latlngs[0][i].lat}
         //xposition = xposition/4
         rectanglenewLayer[rectangleid] ={
-            layer:action.layer,
+            layer:{po:[
+                [action.layer._bounds._southWest.lat,action.layer._bounds._southWest.lng],
+                [action.layer._bounds._northEast.lat,action.layer._bounds._northEast.lng]
+            ]},
             layertype:"rectangle",
             name:"新增圖層",
             address:"",
@@ -319,6 +337,7 @@ switch (action.type) {
             remark:"",
             coordinate: [xposition,yposition],
             id:action.layer._leaflet_id,
+            uniID :unirectangleid,
             bounds: rectanglebounds,
             //zoom: action.zoom,
             OpenOrClose: false,
@@ -336,12 +355,14 @@ switch (action.type) {
     case 'DispatchAddPolygon':
         //console.log(action.layer)
         let Polygonid = action.layer._leaflet_id;
+        let uniPolygonid= (new Date).getTime()
         let PolygonnewLayer={}
         let polygonbounds = action.layer._bounds
         let xxposition = (polygonbounds._northEast.lat+polygonbounds._southWest.lat)/2
         let yyposition = (polygonbounds._northEast.lng+polygonbounds._southWest.lng)/2
         PolygonnewLayer[Polygonid] ={
-            layer:action.layer,
+            layer:{po:[action.layer._latlngs[0].map(id => [id.lat,id.lng],)
+            ]},
             layertype:"polygon",
             name:"新增圖層",
             address:"",
@@ -349,6 +370,7 @@ switch (action.type) {
             remark:"",
             coordinate: [xxposition,yyposition],
             id:action.layer._leaflet_id,
+            uniID:uniPolygonid,
             //bounds: polygonbounds,
             OpenOrClose: false,
             
@@ -366,12 +388,14 @@ switch (action.type) {
     case 'DispatchAddPolyline':
         //console.log(action.layer._latlng)
         let Polylineid = action.layer._leaflet_id;
+        let uniPolylineid = (new Date).getTime()
         let PolylinenewLayer={};
         let LineBounds =action.layer._bounds;
         let linex = (LineBounds._northEast.lat+LineBounds._southWest.lat)/2
         let liney = (LineBounds._northEast.lng+LineBounds._southWest.lng)/2
         PolylinenewLayer[Polylineid] ={
-            layer:action.layer,
+            layer:{po:[action.layer._latlngs.map(id => [id.lat,id.lng],)
+            ]},
             layertype:"polyline",
             name:"新增圖層",
             address:"",
@@ -379,6 +403,7 @@ switch (action.type) {
             remark:"",
             coordinate: [linex,liney],
             id:action.layer._leaflet_id,
+            uniID:uniPolylineid,
             //bounds: LineBounds,
             OpenOrClose: false,
         }
@@ -397,8 +422,11 @@ switch (action.type) {
             //console.log(action.layer._latlng)
             let Circleid = action.layer._leaflet_id;
             let CirclenewLayer={}
+            let uniCircleid = (new Date).getTime()
             CirclenewLayer[Circleid] ={
-                layer:action.layer,
+                layer:{po:[action.layer._latlng.lat,action.layer._latlng.lng],
+                       radius:action.layer._mRadius
+                    },
                 layertype:"circle",
                 name:"新增圖層",
                 address:"",
@@ -407,6 +435,7 @@ switch (action.type) {
                 coordinate: [action.layer._latlng.lat,action.layer._latlng.lng],
                 id:action.layer._leaflet_id,
                 zoom: action.zoom,
+                uniID:uniCircleid,
                 //bounds: action.zoom,
                 OpenOrClose: false,
             }
@@ -431,33 +460,46 @@ switch (action.type) {
 
             let EditState = produce(state, draftState => {
                 Feature.map((id,idx) =>{
-                    //console.log(action.layer._layers[id])
+                    console.log(action.layer._layers[id])
                     //console.log(draftState.sfdata)
                     let editlayer = action.layer._layers[id]
-                    draftState.sfdata[id].layer = editlayer[id]
+                    
                     if(draftState.sfdata[id].layertype === 'marker'){
                         draftState.sfdata[id].coordinate = [editlayer._latlng.lat,editlayer._latlng.lng]
+                        draftState.sfdata[id].layer = {po:[editlayer._latlng.lat,editlayer._latlng.lng]}
+                        
                         //draftState.sfdata[id].address = geoLatLngToAddress([editlayer._latlng.lat,editlayer._latlng.lng])
                     }else if(draftState.sfdata[id].layertype === 'polyline'){
                         let Bounds =editlayer._bounds;
                         let x = (Bounds._northEast.lat+Bounds._southWest.lat)/2
                         let y = (Bounds._northEast.lng+Bounds._southWest.lng)/2
                         draftState.sfdata[id].coordinate = [x,y]
+                        draftState.sfdata[id].layer = {po:[editlayer._latlngs.map(id => [id.lat,id.lng],)
+                        ]}
                         //draftState.sfdata[id].address = geoLatLngToAddress([x,y])
                     }else if(draftState.sfdata[id].layertype === 'polygon'){
                         let Bounds =editlayer._bounds;
                         let x = (Bounds._northEast.lat+Bounds._southWest.lat)/2
                         let y = (Bounds._northEast.lng+Bounds._southWest.lng)/2
                         draftState.sfdata[id].coordinate = [x,y]
+                        draftState.sfdata[id].layer = {po:[editlayer[0]._latlngs.map(id => [id.lat,id.lng],)
+                        ]}
                         //draftState.sfdata[id].address = geoLatLngToAddress([x,y])
                     }else if(draftState.sfdata[id].layertype === 'rectangle'){
                         let Bounds =editlayer._bounds;
                         let x = (Bounds._northEast.lat+Bounds._southWest.lat)/2
                         let y = (Bounds._northEast.lng+Bounds._southWest.lng)/2
                         draftState.sfdata[id].coordinate = [x,y]
+                        draftState.sfdata[id].layer = {po:[
+                            [editlayer._bounds._southWest.lat,editlayer._bounds._southWest.lng],
+                            [editlayer._bounds._northEast.lat,editlayer._bounds._northEast.lng]
+                        ]}
                         //draftState.sfdata[id].address = geoLatLngToAddress([x,y])
                     }else if(draftState.sfdata[id].layertype === 'circle'){
                         draftState.sfdata[id].coordinate = [editlayer._latlng.lat,editlayer._latlng.lng]
+                        draftState.sfdata[id].layer = {po:[editlayer._latlng.lat,editlayer._latlng.lng],
+                            radius:editlayer._mRadius
+                         }
                         //draftState.sfdata[id].address = geoLatLngToAddress([editlayer._latlng.lat,editlayer._latlng.lng])
                     }
                     

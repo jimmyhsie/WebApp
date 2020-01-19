@@ -15,7 +15,7 @@ const apiR = (state , action) => {
       }
     }
   }else if (action.type === "blogmodalstate"){
-    console.log(state.blogmodalstate)
+    //console.log(state.blogmodalstate)
     if(state.blogmodalstate === false){
       return{
         ...state,

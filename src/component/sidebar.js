@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled, {keyframes }from 'styled-components'
-import {ulonclick, pointer} from '../actions/index'
+import {test, ulonclick, pointer} from '../actions/index'
 import { connect } from "react-redux";
 import { ReactComponent as Minus } from '../icon/arrowLeft.svg'
 import { ReactComponent as Plus } from '../icon/arrowRight.svg'
@@ -134,6 +134,7 @@ const Icondiv = styled.div`
     z-index: 4;
     
     `
+const H = styled.div``
 const Sbar = styled.div`
     
     
@@ -159,11 +160,18 @@ class SideBar extends Component {
         }
     }
     
-    onclick = () =>{
+    
+    onclick =async () =>{
         this.setState({
             clickstate: !this.state.clickstate,
             
         })
+         
+        await fetch('/app')
+         .then(response => response.json())
+      
+         .then(posts => this.props.test(posts[0]))
+        
         //console.log(Object.keys(this.props.record).length)
         //console.log(typeof(this.props.record.id))
         //console.log(this.props.record.id)
@@ -180,8 +188,9 @@ class SideBar extends Component {
             <SideDiv className="SideDiv">
                 
                 <Sbar style= { {height: 'calc(100% - 34px)', opacity: 0.5 }} clickstate = {this.state.clickstate}>
-                    
+                    <H>{this.props.testOBJ.blog}</H>
                     { !this.state.clickstate ? '' :<Ful>
+                        
                         {    //console.log(this.props.record),
                             !this.props.record?"this.props.record.map":Object.keys(this.props.record).map((todo, index)=>{
                                 return(
@@ -216,7 +225,7 @@ const mapStateToProps = state => {
     return {
         ulstate: state.ulstate,
         record: state.sfdata,
-
+        testOBJ: state.test,
     }
 }
 
@@ -228,7 +237,10 @@ const mapDispatchToProps = dispatch => {
         
         pointer: data => {
             dispatch(pointer(data))
-        }
+        },
+        test: testi =>{
+            dispatch(test(testi))
+          },
         
     }
 }
