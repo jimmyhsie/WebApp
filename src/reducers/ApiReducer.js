@@ -28,6 +28,20 @@ const apiR = (state , action) => {
       }
     }
   }
+  else if (action.type === "pagestate"){
+    //console.log(state.blogmodalstate)
+    if(state.pagestate === false){
+      return{
+        ...state,
+        pagestate: true
+      }
+    }else{
+      return{
+        ...state,
+        pagestate: false
+      }
+    }
+  }
         return state
     
   }

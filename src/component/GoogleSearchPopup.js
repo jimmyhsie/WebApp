@@ -3,6 +3,7 @@ import {Popup } from "react-leaflet";
 import styled from 'styled-components'
 import {GoogleMarkerToLayer} from '../actions/index'
 import { connect } from "react-redux";
+import { ReactComponent as Markericon } from '../icon/marker.svg';
 
 const Button = styled.button`
 color: tomato;
@@ -11,7 +12,7 @@ float: right;
 `
 const PFrame = styled.div`
 
-    
+    width: 300px;
     background: #FFFFFF;
     
 
@@ -36,12 +37,14 @@ class GooglePopupForm extends Component {
                         
                     
                     <br/>
-
+                    <Markericon style={{float:'left'}} width={20} htmlFor ="" />
                     <span>
                         {this.props.GoogleSearchMarker.position}
                         
                     </span>
+                    
                     <Button type="submit"  onClick= {e=>this.props.GoogleMarkerToLayer(e)}>加入圖層</Button>
+                    
                 
                 </PFrame>
             

@@ -257,6 +257,13 @@ export const modalstate = mstate => {
     }
 }
 
+export const pagestate = () =>{
+    return{
+        type: "pagestate",
+        
+    }
+}
+
 export const blogmodalstate = mstate => {
     return{
         type: "blogmodalstate",

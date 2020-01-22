@@ -1,6 +1,7 @@
 import produce from "immer"
 
 const initState = {
+    pagestate: true,
     test:"{}",
     viewcenter:[],
     pointerToPopup:{TF:false,po:[0,0],type:"",createPo : [0,0] },
