@@ -217,13 +217,14 @@ switch (action.type) {
         //console.log(action.data.bounds)
         let TypeOfPoint = produce(state, draftState => {
 
+            let randomnumber = Math.random()*0.000001
             draftState.fdata.name = action.data.name
             draftState.fdata.address = action.data.address
             draftState.fdata.photo = action.data.photo
             draftState.fdata.remark = action.data.remark
             draftState.fdata.blog = action.data.blog
-            draftState.lat = action.data.coordinate[0]
-            draftState.lng = action.data.coordinate[1]
+            draftState.lat = action.data.coordinate[0]+randomnumber
+            draftState.lng = action.data.coordinate[1]+randomnumber
             if(draftState.pointerToPopup.po[0] == 0 && draftState.pointerToPopup.po[0] !== action.data.coordinate[0]){
                 draftState.pointerToPopup.TF = !draftState.pointerToPopup.TF
                 draftState.pointerToPopup.po = [action.data.coordinate[0],action.data.coordinate[1]]
@@ -309,8 +310,8 @@ switch (action.type) {
                     
         return {
             ...state, 
-            //lat: action.layer._latlng.lat,
-            //lng: action.layer._latlng.lng,
+            lat: action.layer._latlng.lat+0.000001,
+            lng: action.layer._latlng.lng+0.000001,
             zoom: action.zoom,
             //bounds: "",
             sfdata: {...state.sfdata, ...MarkernewLayer},
@@ -346,8 +347,8 @@ switch (action.type) {
                        
         return {
             ...state, 
-            lat: xposition,
-            lng: yposition,
+            lat: xposition+0.000001,
+            lng: yposition+0.000001,
             sfdata: {...state.sfdata, ...rectanglenewLayer},
             zoom: action.zoom,
             //bounds: rectanglebounds,
@@ -379,8 +380,8 @@ switch (action.type) {
                        
         return {
             ...state, 
-            lat: xxposition,
-            lng: yyposition,
+            lat: xxposition+0.000001,
+            lng: yyposition+0.000001,
             zoom: action.zoom,
             //bounds: polygonbounds,
             sfdata: {...state.sfdata, ...PolygonnewLayer},
@@ -411,8 +412,8 @@ switch (action.type) {
                        
         return {
             ...state, 
-            lat: linex,
-            lng: liney,
+            lat: linex+0.000001,
+            lng: liney+0.000001,
             zoom: action.zoom,
             //bounds: LineBounds,
             sfdata: {...state.sfdata, ...PolylinenewLayer},
@@ -443,8 +444,8 @@ switch (action.type) {
                            
             return {
                 ...state, 
-                lat: action.layer._latlng.lat,
-                lng: action.layer._latlng.lng,
+                lat: action.layer._latlng.lat+0.000001,
+                lng: action.layer._latlng.lng+0.000001,
                 zoom: action.zoom,
                 //bounds: action.zoom,
                 sfdata: {...state.sfdata, ...CirclenewLayer},

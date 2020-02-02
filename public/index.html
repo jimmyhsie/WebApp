@@ -35,10 +35,27 @@
       font-family: sans-serif;
       text-align: center;
     }
-    .leaflet-container {
-      height: 720px;
-      width: 100%;
-      margin: 0 auto;
+    
+    @media (min-width:375px) {
+      .leaflet-container {
+        height: 800px;
+        width: 100%;
+        margin: 0 auto;
+      }
+    }
+    @media (min-width:768px) {
+      .leaflet-container {
+        height: 1000px;
+        width: 100%;
+        margin: 0 auto;
+      }
+    }
+    @media (min-width:960px) {
+      .leaflet-container {
+        height: 720px;
+        width: 100%;
+        margin: 0 auto;
+      }
     }
     .leaflet-popup-content-wrapper .leaflet-popup-content {
       border-radius: 0px;

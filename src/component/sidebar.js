@@ -16,7 +16,7 @@ z-index: 3;
 const SideDiv = styled.div`
 background: black;
 margin:0 0 0 0;
-
+height: 100%;
 z-index:3;
 
 `
@@ -90,20 +90,40 @@ const iconrotate = keyframes`
 
 const SlideFromLtoR = keyframes`
 
-    from{
-        width: 0%
+    @media (min-width:375px) {
+        from{
+            width: 0%
+        }
+        to{
+            width: 35%
+        }
     }
-    to{
-        width: 15%
+    @media (min-width:768px) {
+        from{
+            width: 0%
+        }
+        to{
+            width: 15%
+        }
     }
 `
 const SlideFromRtoL = keyframes`
 
-    from{
-        width: 15%
+    @media (min-width:375px) {
+        from{
+            width: 35%
+        }
+        to{
+            width: 0%
+        }
     }
-    to{
-        width: 0%
+    @media (min-width:768px) {
+        from{
+            width: 15%
+        }
+        to{
+            width: 0%
+        }
     }
 `
 const Icondiv = styled.div`
@@ -139,7 +159,21 @@ const Sbar = styled.div`
     
     
     float: left;
-    display: inline;
+    display: block;
+    @media (min-width:375px) {
+        
+        height: 250px;
+        width: 35%;
+        margin: 0 auto;
+        
+    }
+    @media (min-width:768px) {
+        
+        height: 720px;
+        width: 15%;
+        margin: 0 auto;
+        
+    }
     margin-left: auto;
     background: black;
     color: white;
@@ -187,7 +221,7 @@ class SideBar extends Component {
         return (
             <SideDiv className="SideDiv">
                 
-                <Sbar style= { {height: 'calc(100% - 34px)', opacity: 0.5 }} clickstate = {this.state.clickstate}>
+                <Sbar style= { { opacity: 0.5 }} clickstate = {this.state.clickstate}>
                     <H>{this.props.testOBJ.blog}</H>
                     { !this.state.clickstate ? '' :<Ful>
                         
