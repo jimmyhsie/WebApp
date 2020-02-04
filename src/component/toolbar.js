@@ -154,7 +154,7 @@ class ToolBar extends Component {
                 <ToolBarMaterial>
                     
                     <span className="point" onClick={e => this.props.toolstate(this.props.toolsta)}> Tools </span> 
-                    <span className="importfile" onClick={this.props.modalstate}> import File</span>    
+                    <span className="importfile" onClick={this.props.modalstate}> </span>    
                 </ToolBarMaterial>
                 <SearchBar>
                     <input onChange={(event) => this.updateInputText(event)} 
