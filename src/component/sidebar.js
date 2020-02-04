@@ -90,41 +90,27 @@ const iconrotate = keyframes`
 
 const SlideFromLtoR = keyframes`
 
-    @media (min-width:375px) {
+    
         from{
             width: 0%
         }
         to{
-            width: 35%
+            width: 25%
         }
-    }
-    @media (min-width:768px) {
-        from{
-            width: 0%
-        }
-        to{
-            width: 15%
-        }
-    }
+    
+    
 `
 const SlideFromRtoL = keyframes`
 
-    @media (min-width:375px) {
+    {
         from{
-            width: 35%
+            width: 25%
         }
         to{
             width: 0%
         }
-    }
-    @media (min-width:768px) {
-        from{
-            width: 15%
-        }
-        to{
-            width: 0%
-        }
-    }
+    
+    
 `
 const Icondiv = styled.div`
     
@@ -200,12 +186,12 @@ class SideBar extends Component {
             clickstate: !this.state.clickstate,
             
         })
-         
+        /* 
         await fetch('/app')
          .then(response => response.json())
       
          .then(posts => this.props.test(posts[0]))
-        
+        */
         //console.log(Object.keys(this.props.record).length)
         //console.log(typeof(this.props.record.id))
         //console.log(this.props.record.id)
