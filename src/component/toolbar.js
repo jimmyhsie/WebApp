@@ -3,18 +3,35 @@ import styled  from 'styled-components'
 import Geocode  from 'react-geocode'
 import {modalstate, Geo, AupdateInputText, AhandleChange, mapcursor, toolstate} from '../actions/index'
 import { connect } from "react-redux";
+import { ReactComponent as Search } from '../icon/search.svg'
 
 const SearchBar = styled.div`
 height: 100%;
 float: right;
-display: block;
+display: inline-block;
 margin-left: auto;
 background: black;
 color: white;
-input {
-    height: 20px;
-    margin: 4px;
+
+@media (min-width:375px) {
+    width: 100px;
+    input {
+        display: inline-block;
+        width: 100%;
+        height: 20px;
+        margin: 8px 0px 0px 0px ;
+    }
 }
+@media (min-width:768px) {
+    width: 200px;
+    input {
+        display: inline-block;
+        width: 100%;
+        height: 20px;
+        margin: 8px 0px 0px 0px ;
+    }
+}
+
 `
 const ToolBarOutline = styled.div`
 width: 100%;
@@ -27,12 +44,31 @@ select {
     margin: 7px;
     float:left;
 }
+.icon {
+    margin: 8px 0px 0px 0px ;
+    g {
+    
+        fill: #DB7290;;
+    }
+    g path {
+        
+        stroke: #DB7290;;
+        fill: #FFD0DD;
+    
+    }
+}
+ 
 `
 const ToolBarMaterial = styled.div`
-width: 200px;
+@media (min-width:375px) {
+    width: 150px;
+}
+@media (min-width:768px) {
+    width: 200px;
+}
 height: 29px;
 float: left;
-
+display: inline-block;
 top: 0px;
 background: black;
 color: white;
@@ -126,8 +162,9 @@ class ToolBar extends Component {
                         type="text"  
                         placeholder='請輸入地址'
                         onKeyPress={(event) => this.updateInputText(event)}>
-                    </input>
+                    </input>    
                 </SearchBar>
+                <Search className ='icon' width={25} style={{cursor:'pointer', float:'right', display: 'inline-block'}}  onClick={ () => this.geoFirist(this.props.inputText)}></Search>
             </ToolBarOutline>
             
             
