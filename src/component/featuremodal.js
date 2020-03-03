@@ -16,7 +16,7 @@ class Featuremodal extends Component {
                 <Modal show = {this.props.mmodalstate} onHide = {this.props.modalstate}>
                     
                       <Modal.Header closeButton >
-                        <Modal.Title>匯入檔案</Modal.Title>
+                        <Modal.Title>匯入檔案(建製中)</Modal.Title>
                       </Modal.Header>
 
                       <Modal.Body>

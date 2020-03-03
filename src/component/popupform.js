@@ -82,7 +82,7 @@ photoUpload = e =>{
                         <input
                         name="address"
                         type="text"
-                        placeholder="請輸入地址"
+                        placeholder="景點旅遊順序"
                         value={this.props.fdata.address||""}
                         onChange={this.props.handleAddress} 
                         style ={{ width:'280px', padding:'0'}}

@@ -1,13 +1,11 @@
 import produce from "immer"
 
 const initState = {
+    userloginstatus:[false,'guest'],
     pagestate: true,
     test:"{}",
     viewcenter:[],
     pointerToPopup:{TF:false,po:[0,0],type:"",createPo : [0,0] },
-    ulstate : {
-        OpenOrClose: [],
-    },
     modalstate: false,
     blogmodalstate: false,
     
@@ -26,7 +24,7 @@ const initState = {
       layer:{},
       id:1,
       name:"",
-      address:"",
+      address:0, //改為排序順位
       coordinate:"",
       photo:"",
       remark:"",
@@ -49,7 +47,12 @@ switch (action.type) {
             test: action.testi
         }
         
+    case 'changeuserstatus':
 
+        let loginState = produce(state,draftState =>{
+            draftState.userloginstatus = action.loginstatus
+        })
+        return loginState
     case 'Geo':
         
         return {
@@ -223,6 +226,7 @@ switch (action.type) {
             draftState.fdata.photo = action.data.photo
             draftState.fdata.remark = action.data.remark
             draftState.fdata.blog = action.data.blog
+            draftState.clickFeatureID= action.data.id
             draftState.lat = action.data.coordinate[0]+randomnumber
             draftState.lng = action.data.coordinate[1]+randomnumber
             if(draftState.pointerToPopup.po[0] == 0 && draftState.pointerToPopup.po[0] !== action.data.coordinate[0]){
@@ -290,8 +294,8 @@ switch (action.type) {
     case 'DispatchAddMarker':
         
         let Markerid = action.layer._leaflet_id;
-        let MarkernewLayer={}
-        let uniMarkerid = (new Date).getTime()
+        let MarkernewLayer={};
+        let uniMarkerid = (new Date).getTime();
         MarkernewLayer[Markerid] ={
             layer:{po:[action.layer._latlng.lat,action.layer._latlng.lng]},
             layertype:"marker",

@@ -1,9 +1,18 @@
 import React, { Component } from 'react'
 import styled  from 'styled-components'
 import Geocode  from 'react-geocode'
-import {modalstate, Geo, AupdateInputText, AhandleChange, mapcursor, toolstate} from '../actions/index'
+import {modalstate, Geo, AupdateInputText, AhandleChange, mapcursor, toolstate, changeuserstatus} from '../actions/index'
 import { connect } from "react-redux";
 import { ReactComponent as Search } from '../icon/search.svg'
+import { ReactComponent as Map } from '../icon/map.svg'
+import { ReactComponent as User } from '../icon/user.svg'
+import { Redirect,Link } from 'react-router-dom'
+import Form from 'react-bootstrap/Form'
+import Navbar from 'react-bootstrap/Navbar'
+import NavDropdown from 'react-bootstrap/NavDropdown'
+import Nav from 'react-bootstrap/Nav'
+import FormControl from 'react-bootstrap/FormControl'
+
 
 const SearchBar = styled.div`
 height: 100%;
@@ -56,6 +65,13 @@ select {
         fill: #FFD0DD;
     
     }
+
+    path {
+        
+        stroke: #DB7290;;
+        fill: #FFD0DD;
+    
+    }
 }
  
 `
@@ -97,6 +113,17 @@ const key = 'AIzaSyB-DzlaXFMDeKrnNKs_EzP27BTnqZ5BfiE'
 
 
 class ToolBar extends Component {
+
+    componentDidMount() {
+        fetch('/app/user/auth', {
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            method: "get",
+        })
+        .then(response => response.json())
+        .then(loginstate => {this.props.changeuserstatus(loginstate); console.log(typeof(loginstate),loginstate)})
+    }
     
     geoFirist(text) {
     Geocode.setApiKey(key)
@@ -119,10 +146,11 @@ class ToolBar extends Component {
     )
     }
     updateInputText(event) {
+        event.preventDefault()
         let text = event.target.value
         this.props.AupdateInputText(text)
-        
-        if(event.key === 'Enter'){
+        console.log(text)
+        if(event.charCode ==13 ){
             
             this.geoFirist(text);
         }
@@ -134,41 +162,76 @@ class ToolBar extends Component {
       this.props.AhandleChange(id)
       
     }  
+    
+    userAuth(userloginstatus) {
+         
+        
+        
+        
+        if(!userloginstatus[0]){
+            return (
+                <Nav className="justify-content-end">
+                    <Nav.Link href="/login" >登入</Nav.Link>
+                    <Nav.Link href="/userRegist" >註冊</Nav.Link>
+                </Nav>
+            )
+        }else{
+            return (
+                
+                <NavDropdown title={userloginstatus[1]} alignRight id="basic-nav-dropdown"  >
+                    <NavDropdown.Item href="/userinf" >用戶資訊</NavDropdown.Item>
+                    <NavDropdown.Item href="/logout">登出</NavDropdown.Item>
+                </NavDropdown>
+                
+                
+            )
+        }
+    }
+
 
     render() {
         //console.log(this.props.toolsta)
         return(
-            <div>
-            <ToolBarOutline>
-                <select  value={this.props.LayerId} onChange={(event) => this.handleChange(event)}>
-                {LayerList.map((todo, index)=>{
-                        return(
-                            <option key={todo.id}
-                            value={todo.id}>{todo.name}
-                            </option>
-                        )
-                    })
-                }    
-                </select>
+            
+            <Navbar bg="light" expand="sm">
+              <Navbar.Brand href="/">旅行戳記</Navbar.Brand>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Map className ='icon' width={35} style={{ display: 'inline-block'}}  ></Map>  
+                <Nav className="mr-auto">
                 
-                <ToolBarMaterial>
-                    
-                    <span className="point" onClick={e => this.props.toolstate(this.props.toolsta)}> Tools </span> 
-                    <span className="importfile" onClick={this.props.modalstate}> </span>    
-                </ToolBarMaterial>
-                <SearchBar>
-                    <input onChange={(event) => this.updateInputText(event)} 
-                        value = {this.props.inputText} 
-                        type="text"  
-                        placeholder='請輸入地址'
-                        onKeyPress={(event) => this.updateInputText(event)}>
-                    </input>    
-                </SearchBar>
-                <Search className ='icon' width={25} style={{cursor:'pointer', float:'right', display: 'inline-block'}}  onClick={ () => this.geoFirist(this.props.inputText)}></Search>
-            </ToolBarOutline>
+                <Form.Control as="select" value={this.props.LayerId} onChange={(event) => this.handleChange(event)}>
+                    {LayerList.map((todo, index)=>{
+                            return(
+                                <option key={todo.id}
+                                value={todo.id}>{todo.name}
+                                </option>
+                            )
+                        })
+                    } 
+                </Form.Control>
+                  
+                <Nav.Link href="#" onClick={e => this.props.toolstate(this.props.toolsta)}>Tool</Nav.Link>
+                <Nav.Link href="#" onClick={this.props.modalstate}>importfile </Nav.Link>
+                  
+                </Nav>
+                <Form inline>
+                  <FormControl type="text" placeholder="Search" className="mr-sm-2" 
+                    onChange={(event) => this.updateInputText(event)} 
+                    value = {this.props.inputText}   
+                    placeholder='請輸入地址'
+                    onKeyPress={(event) => this.updateInputText(event)}/>
+                  <Search className ='icon' width={25} style={{cursor:'pointer', float:'right', display: 'inline-block'}}  onClick={ () => this.geoFirist(this.props.inputText)}></Search>
+                  
+                </Form>
+                
+                { this.userAuth(this.props.userloginstatus)}
+              
+              </Navbar.Collapse>  
+              
+            </Navbar>
             
-            
-            </div>
         )
     }
 }
@@ -178,6 +241,7 @@ const mapStateToProps = state => {
         inputText: state.inputText,
         LayerId: state.LayerId,
         toolsta: state.toolsta,
+        userloginstatus:state.userloginstatus,
 
     }
 }
@@ -202,6 +266,9 @@ const mapDispatchToProps = dispatch => {
         modalstate: mboolean => {
             dispatch(modalstate(mboolean))
         },
+        changeuserstatus: loginstatus => {
+            dispatch(changeuserstatus(loginstatus))
+        }
     }
 }
 

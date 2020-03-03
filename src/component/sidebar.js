@@ -198,7 +198,32 @@ class SideBar extends Component {
         
     }
 
+    listsort(record) {
+        let listsort = []
+        Object.keys(record).map((todo, index)=>{
+            listsort.push(record[todo])
+        })
+        
+        return (listsort.sort(function(a,b){
+            return a.address-b.address
+        }).map((todo, index)=>{
+            return(
 
+                //console.log(this.props.record[todo].id),
+                console.log(todo),
+                <li className="subli" key={todo.id}>
+                    <span className="subtitle" style= {{cursor:'pointer',}} id={todo.id} onClick ={e => {this.props.pointer(todo);console.log(todo)}}>{todo.name}</span>
+                    <div style={{width:'25px', display: 'inline-block' , float: 'right'}}>
+                        <Blog className="OpenButton" onClick={e => this.props.ulonclick(todo.id) } ></Blog>
+                    </div>
+                </li>    
+    
+                )
+            })
+        )
+                     
+        
+    }
 
     
 
@@ -212,20 +237,7 @@ class SideBar extends Component {
                     { !this.state.clickstate ? '' :<Ful>
                         
                         {    //console.log(this.props.record),
-                            !this.props.record?"this.props.record.map":Object.keys(this.props.record).map((todo, index)=>{
-                                return(
-
-                                    //console.log(this.props.record[todo].id),
-                                    //console.log(index),
-                                    <li className="subli" key={this.props.record[todo].id}>
-                                        <span className="subtitle" style= {{cursor:'pointer',}} id={this.props.record[todo].id} onClick ={e => this.props.pointer(this.props.record[todo])}>{this.props.record[todo].name}</span>
-                                        <div style={{width:'25px', display: 'inline-block' , float: 'right'}}>
-                                        <Blog className="OpenButton" onClick={e => this.props.ulonclick(todo) } >O</Blog>
-                                        </div>
-                                    </li>    
-
-                                )
-                            })                      
+                            !this.props.record?"this.props.record.map":this.listsort(this.props.record)                     
                         }</Ful>
                     }
                 </Sbar>

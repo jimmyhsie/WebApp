@@ -84,6 +84,12 @@ export const getmoveend = e => {
         e
     }
 }
+export const changeuserstatus = loginstatus => {
+    return{
+        type:"changeuserstatus",
+        loginstatus
+    }
+}
 export const pointer = (data) => {
     return{
         type:'pointer',

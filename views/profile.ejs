@@ -1,0 +1,9 @@
+<p>
+ID: <%= user.id %><br/>
+Username: <%= user.username %><br/>
+Name: <%= user.username %><br/>
+<% if (user.email) { %>
+Email: <%= user.email %><br/>
+<% } %>
+</p>
+<a href="/logout">Log out</a>
