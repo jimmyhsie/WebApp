@@ -60,12 +60,12 @@ DROP TABLE IF EXISTS `apptable`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `apptable` (
   `id` double NOT NULL,
-  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `photo` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `name` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `photo` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `remark` text CHARACTER SET utf8 COLLATE utf8_bin,
   `address` int(11) NOT NULL,
-  `blog` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `layertype` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `blog` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `layertype` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `layer` json DEFAULT NULL,
   `coordinate` json DEFAULT NULL,
   `zoom` int(11) DEFAULT NULL,
@@ -422,7 +422,7 @@ UNLOCK TABLES;
 --
 
 /*!40000 ALTER TABLE `innodb_index_stats` DISABLE KEYS */;
-INSERT  IGNORE INTO `innodb_index_stats` VALUES ('app','accounts','PRIMARY','2020-03-03 10:00:51','n_diff_pfx01',3,1,'id'),('app','accounts','PRIMARY','2020-03-03 10:00:51','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('app','accounts','PRIMARY','2020-03-03 10:00:51','size',1,NULL,'Number of pages in the index'),('app','apptable','PRIMARY','2020-02-25 02:43:10','n_diff_pfx01',0,1,'id'),('app','apptable','PRIMARY','2020-02-25 02:43:10','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('app','apptable','PRIMARY','2020-02-25 02:43:10','size',1,NULL,'Number of pages in the index'),('mysql','component','PRIMARY','2020-01-06 13:46:24','n_diff_pfx01',0,1,'component_id'),('mysql','component','PRIMARY','2020-01-06 13:46:24','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('mysql','component','PRIMARY','2020-01-06 13:46:24','size',1,NULL,'Number of pages in the index'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','n_diff_pfx01',0,1,'source_uuid'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','n_diff_pfx02',0,1,'source_uuid,interval_start'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','size',1,NULL,'Number of pages in the index');
+INSERT  IGNORE INTO `innodb_index_stats` VALUES ('app','accounts','PRIMARY','2020-03-03 10:00:51','n_diff_pfx01',3,1,'id'),('app','accounts','PRIMARY','2020-03-03 10:00:51','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('app','accounts','PRIMARY','2020-03-03 10:00:51','size',1,NULL,'Number of pages in the index'),('app','apptable','PRIMARY','2020-03-04 04:41:40','n_diff_pfx01',0,1,'id'),('app','apptable','PRIMARY','2020-03-04 04:41:40','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('app','apptable','PRIMARY','2020-03-04 04:41:40','size',1,NULL,'Number of pages in the index'),('mysql','component','PRIMARY','2020-01-06 13:46:24','n_diff_pfx01',0,1,'component_id'),('mysql','component','PRIMARY','2020-01-06 13:46:24','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('mysql','component','PRIMARY','2020-01-06 13:46:24','size',1,NULL,'Number of pages in the index'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','n_diff_pfx01',0,1,'source_uuid'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','n_diff_pfx02',0,1,'source_uuid,interval_start'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('mysql','gtid_executed','PRIMARY','2020-01-06 13:46:24','size',1,NULL,'Number of pages in the index');
 /*!40000 ALTER TABLE `innodb_index_stats` ENABLE KEYS */;
 
 --
@@ -430,7 +430,7 @@ INSERT  IGNORE INTO `innodb_index_stats` VALUES ('app','accounts','PRIMARY','202
 --
 
 /*!40000 ALTER TABLE `innodb_table_stats` DISABLE KEYS */;
-INSERT  IGNORE INTO `innodb_table_stats` VALUES ('app','accounts','2020-03-03 10:00:51',3,1,0),('app','apptable','2020-02-25 02:43:10',0,1,0),('mysql','component','2020-01-06 13:46:24',0,1,0),('mysql','gtid_executed','2020-01-06 13:46:24',0,1,0);
+INSERT  IGNORE INTO `innodb_table_stats` VALUES ('app','accounts','2020-03-03 10:00:51',3,1,0),('app','apptable','2020-03-04 04:41:40',0,1,0),('mysql','component','2020-01-06 13:46:24',0,1,0),('mysql','gtid_executed','2020-01-06 13:46:24',0,1,0);
 /*!40000 ALTER TABLE `innodb_table_stats` ENABLE KEYS */;
 
 --
@@ -1002,4 +1002,4 @@ CREATE TABLE IF NOT EXISTS `slow_log` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-04 12:37:58
+-- Dump completed on 2020-03-04 12:41:50
