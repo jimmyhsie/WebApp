@@ -2,7 +2,6 @@
 const express = require('express');
 const app = express(); //建立一個Express伺服器
 const path = require('path');
-const ensurelogin = require('connect-ensure-login')
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
@@ -17,7 +16,8 @@ const connectionAccount = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : 'ss880062',
-  database : 'app'
+  database : 'app',
+  port:'3306'
 });  
 
 const passport = require('passport')
