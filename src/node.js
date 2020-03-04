@@ -9,7 +9,8 @@ const connection = mysql.createConnection({
     user: 'root',
     password: 'ss880062',
     database: 'app',
-    port:'3306'
+    port:'3306',
+    useConnectionPooling: true,
   });
 
 const connectionAccount = mysql.createConnection({
@@ -17,7 +18,12 @@ const connectionAccount = mysql.createConnection({
   user     : 'root',
   password : 'ss880062',
   database : 'app',
+<<<<<<< HEAD
+  port:'3306',
+  useConnectionPooling: true,
+=======
   port:'3306'
+>>>>>>> 3b40e819ba2271713cf8379f4f326df740a220e3
 });  
 
 const passport = require('passport')
