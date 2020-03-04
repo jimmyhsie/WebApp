@@ -32,16 +32,6 @@ CREATE TABLE `accounts` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `accounts`
---
-
-LOCK TABLES `accounts` WRITE;
-/*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES (155866,'jimmy','ss880062','jimmyhsie@gmail.com'),(155867,'yaya','770721','jimmyhsie@gmail.com'),(155868,'test','test','test@gmail.com');
-/*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `apptable`
 --
 
@@ -64,15 +54,6 @@ CREATE TABLE `apptable` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `apptable`
---
-
-LOCK TABLES `apptable` WRITE;
-/*!40000 ALTER TABLE `apptable` DISABLE KEYS */;
-/*!40000 ALTER TABLE `apptable` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -83,4 +64,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-04 12:20:28
+-- Dump completed on 2020-03-04 12:25:24
