@@ -1,9 +1,10 @@
 
-var session = require('express-session');
-var bodyParser = require('body-parser');
+
 const express = require('express');
 const app = express(); //建立一個Express伺服器
 const path = require('path');
+var session = require('express-session');
+var bodyParser = require('body-parser');
 
 const mysql = require('mysql');
 
@@ -18,6 +19,8 @@ app.get('/test', function(req, res) {
   res.json('test')
 });
 
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -33,7 +36,9 @@ app.use(session({
 }));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
-
+app.get('/', function(request, response) {
+	response.sendFile(path.join(__dirname + '/login.html'));
+});
 app.post('/login', function(request, response) {
 	var username = request.body.username;
 	var password = request.body.password;
