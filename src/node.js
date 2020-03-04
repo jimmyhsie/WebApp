@@ -13,14 +13,7 @@ const connection = mysql.createConnection({
     useConnectionPooling: true,
   });
 
-const connectionAccount = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'ss880062',
-  database : 'app',
-  port:'3306',
-  useConnectionPooling: true,
-});  
+
 
 const passport = require('passport')
 // 引入驗證機制： passport-local
@@ -34,7 +27,7 @@ passport.use(new LocalStrategy(
   // 當請 passport 要驗證時，呼叫此 callback 函式，並帶入驗證資訊驗證
   function(req,username, password, done) {
     // Mongoose 以帳號資訊向 MongoDB 查找這位使用者
-    connectionAccount.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(err, user) {
+    connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(err, user) {
       // 如果伺服器端回傳錯誤訊息，提供 passport 錯誤訊息
       if (err) { console.log(err); return done(err) }
       // 如果沒有在資料庫裡找到該位使用者，不提供 passport 任何使用者資訊
@@ -59,9 +52,9 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({
-  secret: 'nksnfoiehhrekwqnrlkje',
-  resave: 'false',
-  saveUninitialized: 'false'
+  secret: 'secret',
+	resave: true,
+	saveUninitialized: true
 }))
 
 // 初始化 Passport
@@ -77,7 +70,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
   // 透過使用者 id 到 MongoDB 資料庫尋找用戶完整資訊
-  connectionAccount.query("select * from accounts where id = "+id,function(err,users){	
+  connection.query("select * from accounts where id = "+id,function(err,users){	
     done(err, users[0]);
   })
 })
@@ -206,7 +199,7 @@ app.post('/userRegist',
         let stmt = `INSERT INTO accounts(username,password,email)
         VALUES(?,?,?)`;
         let dataValue = [username,password,email];
-        connectionAccount.query(stmt, dataValue, (err, results, fields) => {
+        connection.query(stmt, dataValue, (err, results, fields) => {
           if (err) {
             return console.error(err.message);
           }
