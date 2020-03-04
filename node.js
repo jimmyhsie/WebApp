@@ -1,5 +1,6 @@
 
-
+var session = require('express-session');
+var bodyParser = require('body-parser');
 const express = require('express');
 const app = express(); //建立一個Express伺服器
 const path = require('path');
