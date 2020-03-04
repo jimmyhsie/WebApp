@@ -18,12 +18,8 @@ const connectionAccount = mysql.createConnection({
   user     : 'root',
   password : 'ss880062',
   database : 'app',
-<<<<<<< HEAD
   port:'3306',
   useConnectionPooling: true,
-=======
-  port:'3306'
->>>>>>> 3b40e819ba2271713cf8379f4f326df740a220e3
 });  
 
 const passport = require('passport')
@@ -40,7 +36,7 @@ passport.use(new LocalStrategy(
     // Mongoose 以帳號資訊向 MongoDB 查找這位使用者
     connectionAccount.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(err, user) {
       // 如果伺服器端回傳錯誤訊息，提供 passport 錯誤訊息
-      if (err) { return done(err) }
+      if (err) { console.log(err); return done(err) }
       // 如果沒有在資料庫裡找到該位使用者，不提供 passport 任何使用者資訊
       if (!user) { return done(null, false) }
       // 如果從資料庫找到了該名使用者，但密碼錯誤時，不提供 passport 任何使用者資訊
