@@ -295,7 +295,7 @@ switch (action.type) {
         
         let Markerid = action.layer._leaflet_id;
         let MarkernewLayer={};
-        let uniMarkerid = (new Date).getTime();
+        let uniMarkerid = (new Date()).getTime();
         MarkernewLayer[Markerid] ={
             layer:{po:[action.layer._latlng.lat,action.layer._latlng.lng]},
             layertype:"marker",

@@ -1,12 +1,10 @@
-
-
 const express = require('express');
 const app = express(); //建立一個Express伺服器
 const path = require('path');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 
-const mysql = require('mysql');
+const connection = require('./db.js');
 
 
 app.use(express.static(path.join(__dirname, 'build')));
@@ -21,14 +19,7 @@ app.get('/test', function(req, res) {
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'ss880062',
-    database: 'app',
-    port:'3306',
-    useConnectionPooling: true,
-  });
+
 app.use(session({
 	secret: 'secret',
 	resave: true,
@@ -44,10 +35,11 @@ app.post('/login', function(request, response) {
 	var password = request.body.password;
 	if (username && password) {
 		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+			console.log(results);
 			if (results.length > 0) {
 				request.session.loggedin = true;
 				request.session.username = username;
-				response.redirect('/home');
+				response.redirect('/');
 			} else {
 				response.send('Incorrect Username and/or Password!');
 			}			
@@ -61,6 +53,5 @@ app.post('/login', function(request, response) {
 
 app.listen(3000, function () {
     console.log('Example app is running on port 3000!');
-    console.log(__dirname);
-    console.log(path.basename(__dirname))}
+
   );
